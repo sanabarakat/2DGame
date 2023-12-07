@@ -17,17 +17,13 @@ Game::Game() {
     initBackground();
     initPlayer();
 }
-/**
- * Window initializer.
- */
+
 int Game::initWindow() {
     window.create(sf::VideoMode(SCENE_WIDTH, SCENE_HEIGHT), "My 2D game");
     window.setFramerateLimit(120);
     return 0;
 }
-/**
- * Background initializer.
- */
+
 int Game::initBackground() {
     if (!backgroundTexture.loadFromFile("resources/background.png")) {
         return 1;
@@ -38,10 +34,6 @@ int Game::initBackground() {
     return 0;
 }
 
-/**
- * Player (e.g. PacMan) initializer
- * @return 0 if successfully initialized, 1 otherwise
- */
 int Game::initPlayer() {
     player.setRadius(RADIUS);
     player.setOrigin(RADIUS, RADIUS);
@@ -53,9 +45,6 @@ int Game::initPlayer() {
     return 0;
 }
 
-/**
- * Dealing with events on window.
- */
 void Game::processInput() {
     sf::Event event;
     while (window.pollEvent(event)) {
@@ -63,33 +52,47 @@ void Game::processInput() {
             case sf::Event::Closed:
                 window.close();
                 break;
+            case sf::Event::KeyPressed:
+                if (event.key.code == sf::Keyboard::Left) {
+                    player.move(-PLAYER_SPEED, 0);
+                } else if (event.key.code == sf::Keyboard::Right) {
+                    player.move(PLAYER_SPEED, 0);
+                } else if (event.key.code == sf::Keyboard::Up) {
+                    player.move(0, -PLAYER_SPEED);
+                } else if (event.key.code == sf::Keyboard::Down) {
+                    player.move(0, PLAYER_SPEED);
+                }
+                break;
             default:
                 break;
         }
     }
 }
 
-/**
- * Function to update the position of the player
- */
 void Game::update() {
-    float x = player.getPosition().x;
-    float y = player.getPosition().y;
-    player.setPosition(x, y);
+    sf::Vector2f position = player.getPosition();
+    if (position.x - RADIUS < 0) {
+        position.x = RADIUS;
+    }
+    if (position.x + RADIUS > SCENE_WIDTH) {
+        position.x = SCENE_WIDTH - RADIUS;
+    }
+    if (position.y - RADIUS < 0) {
+        position.y = RADIUS;
+    }
+    if (position.y + RADIUS > SCENE_HEIGHT) {
+        position.y = SCENE_HEIGHT - RADIUS;
+    }
+    player.setPosition(position);
 }
 
-/**
- * Render elements in the window
- */
 void Game::render() {
     window.clear(sf::Color::White);
     window.draw(background);
     window.draw(player);
     window.display();
 }
-/**
- * Main function to deal with events, update the player and render the updated scene on the window.
- */
+
 int Game::run() {
     while (window.isOpen()) {
         processInput();

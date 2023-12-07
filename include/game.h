@@ -24,6 +24,7 @@ private:
     static const float PLAYER_START_X;
     static const float PLAYER_START_Y;
     static const float RADIUS;
+    const float PLAYER_SPEED = 5.0f;
 
     int initWindow();
     int initBackground();
